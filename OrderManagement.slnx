@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Api/">
+    <Project Path="src/OrderManagement.Api/OrderManagement.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="src/OrderManagement.Application/OrderManagement.Application.csproj" />
+    <Project Path="src/OrderManagement.Domain/OrderManagement.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/ OrderManagement.Infrastructure.Identity/OrderManagement.Infrastructure.Identity.csproj" />
+    <Project Path="src/OrderManagement.Infrastructure.Persistence/OrderManagement.Infrastructure.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Workers/">
+    <Project Path="src/OrderManagement.Worker/OrderManagement.Worker.csproj" />
+  </Folder>
+</Solution>
