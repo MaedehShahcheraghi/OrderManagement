@@ -10,6 +10,8 @@ public sealed class OrderDbContext(
     DbContextOptions<OrderDbContext> options)
     : DbContext(options)
 {
+    public const string Schema = "sales";
+
     public DbSet<Order> Orders => Set<Order>();
 
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();

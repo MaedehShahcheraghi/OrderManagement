@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OrderManagement.Domain.Entities.Customers;
+using OrderManagement.Infrastructure.Persistence.Contexts;
 
 namespace OrderManagement.Infrastructure.Persistence.Configurations;
 
@@ -9,7 +10,7 @@ public sealed class CustomerConfiguration
 {
     public void Configure(EntityTypeBuilder<Customer> builder)
     {
-        builder.ToTable("Customers");
+        builder.ToTable("Customers", OrderDbContext.Schema);
 
         builder.HasKey(x => x.Id);
 

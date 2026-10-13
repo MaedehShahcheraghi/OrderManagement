@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OrderManagement.Domain.Entities.Inventory;
 using OrderManagement.Domain.Entities.Products;
+using OrderManagement.Infrastructure.Persistence.Contexts;
 
 namespace OrderManagement.Infrastructure.Persistence.Configurations;
 
@@ -10,7 +11,7 @@ public sealed class InventoryStockConfiguration
 {
     public void Configure(EntityTypeBuilder<InventoryStock> builder)
     {
-        builder.ToTable("InventoryStocks", table =>
+        builder.ToTable("InventoryStocks", schema: OrderDbContext.Schema, table =>
             table.HasCheckConstraint(
                 "CK_InventoryStocks_Quantity",
                 "[AvailableQuantity] >= 0"));

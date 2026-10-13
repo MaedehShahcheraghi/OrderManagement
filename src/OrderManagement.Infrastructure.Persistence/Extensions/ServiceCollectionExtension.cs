@@ -18,7 +18,14 @@ public static class ServiceCollectionExtension
             options
                 .UseSqlServer(
                     connectionString,
-                    sql => sql.UseCompatibilityLevel(160))
+                    sql =>
+                    {
+                        sql.UseCompatibilityLevel(160);
+
+                        sql.MigrationsHistoryTable(
+                            "__EFMigrationsHistory",
+                            OrderDbContext.Schema);
+                    })
                 .UseSeeding((context, _) =>
                     DatabaseSeeder.Seed(
                         (OrderDbContext)context))

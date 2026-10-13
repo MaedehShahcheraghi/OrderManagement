@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
     <ProjectReference Include="../OrderManagement.Application/OrderManagement.Application.csproj" />
+    <ProjectReference Include="..\ OrderManagement.Infrastructure.Identity\OrderManagement.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\OrderManagement.Infrastructure.Persistence\OrderManagement.Infrastructure.Persistence.csproj" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
           <PrivateAssets>all</PrivateAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
 </Project>

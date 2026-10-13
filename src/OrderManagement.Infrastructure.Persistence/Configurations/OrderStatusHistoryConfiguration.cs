@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OrderManagement.Domain.Entities.Orders;
+using OrderManagement.Infrastructure.Persistence.Contexts;
 
 namespace OrderManagement.Infrastructure.Persistence.Configurations;
 
@@ -9,7 +10,7 @@ public sealed class OrderStatusHistoryConfiguration
 {
     public void Configure(EntityTypeBuilder<OrderStatusHistory> builder)
     {
-        builder.ToTable("OrderStatusHistory");
+        builder.ToTable("OrderStatusHistory", schema: OrderDbContext.Schema);
 
         builder.HasKey(x => x.Id);
 

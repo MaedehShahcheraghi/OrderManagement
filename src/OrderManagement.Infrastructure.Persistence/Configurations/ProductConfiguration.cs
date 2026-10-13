@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OrderManagement.Domain.Entities.Products;
+using OrderManagement.Infrastructure.Persistence.Contexts;
 
 namespace OrderManagement.Infrastructure.Persistence.Configurations;
 
@@ -9,7 +10,7 @@ public sealed class ProductConfiguration
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        builder.ToTable("Products", table =>
+        builder.ToTable("Products", schema: OrderDbContext.Schema, table =>
             table.HasCheckConstraint(
                 "CK_Products_UnitPrice",
                 "[UnitPrice] > 0"));

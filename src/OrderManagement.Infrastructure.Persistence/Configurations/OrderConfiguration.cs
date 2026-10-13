@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OrderManagement.Domain.Entities.Customers;
 using OrderManagement.Domain.Entities.Orders;
+using OrderManagement.Infrastructure.Persistence.Contexts;
 
 namespace OrderManagement.Infrastructure.Persistence.Configurations;
 
@@ -10,7 +11,7 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.ToTable("Orders", table =>
+        builder.ToTable("Orders", schema: OrderDbContext.Schema, table =>
         {
             table.HasCheckConstraint(
                 "CK_Orders_TotalAmount",

@@ -45,7 +45,7 @@ namespace OrderManagement.Infrastructure.Persistence.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers", "sales");
                 });
 
             modelBuilder.Entity("OrderManagement.Domain.Entities.Inventory.InventoryStock", b =>
@@ -72,7 +72,7 @@ namespace OrderManagement.Infrastructure.Persistence.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("InventoryStocks", null, t =>
+                    b.ToTable("InventoryStocks", "sales", t =>
                         {
                             t.HasCheckConstraint("CK_InventoryStocks_Quantity", "[AvailableQuantity] >= 0");
                         });
@@ -131,7 +131,7 @@ namespace OrderManagement.Infrastructure.Persistence.Migrations
                     b.HasIndex("Status", "Id")
                         .HasFilter("[IsDeleted] = 0");
 
-                    b.ToTable("Orders", null, t =>
+                    b.ToTable("Orders", "sales", t =>
                         {
                             t.HasCheckConstraint("CK_Orders_Status", "[Status] BETWEEN 0 AND 3");
 
@@ -199,7 +199,7 @@ namespace OrderManagement.Infrastructure.Persistence.Migrations
                     b.HasIndex("OrderId", "OrderRevision")
                         .IsUnique();
 
-                    b.ToTable("OrderStatusHistory", (string)null);
+                    b.ToTable("OrderStatusHistory", "sales");
                 });
 
             modelBuilder.Entity("OrderManagement.Domain.Entities.Products.Product", b =>
@@ -229,7 +229,7 @@ namespace OrderManagement.Infrastructure.Persistence.Migrations
                     b.HasIndex("Sku")
                         .IsUnique();
 
-                    b.ToTable("Products", null, t =>
+                    b.ToTable("Products", "sales", t =>
                         {
                             t.HasCheckConstraint("CK_Products_UnitPrice", "[UnitPrice] > 0");
                         });
