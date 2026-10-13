@@ -21,5 +21,11 @@
 
       <PackageVersion Include="System.IdentityModel.Tokens.Jwt"
                       Version="8.22.0" />
+
+      <PackageVersion Include="FluentValidation"
+                      Version="12.1.1" />
+
+      <PackageVersion Include="FluentValidation.DependencyInjectionExtensions"
+                      Version="12.1.1" />
   </ItemGroup>
 </Project>

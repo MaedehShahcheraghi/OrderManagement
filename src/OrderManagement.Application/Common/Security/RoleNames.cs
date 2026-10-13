@@ -1,5 +1,4 @@
-﻿namespace OrderManagement.Api.Security;
-
+﻿namespace OrderManagement.Application.Common.Security;
 
 public static class RoleNames
 {

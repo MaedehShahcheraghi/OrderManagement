@@ -3,4 +3,8 @@
 public sealed record Error(
     string Code,
     string Message,
-    ErrorType Type);
+    ErrorType Type)
+{
+    public IReadOnlyDictionary<string, string[]>?
+        ValidationErrors { get; init; }
+}

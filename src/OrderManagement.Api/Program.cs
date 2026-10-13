@@ -15,7 +15,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddApplication().
     AddInfrastructure(connectionString)
     .AddIdentityInfrastructure(connectionString);
-builder.Services.AddScoped<ICurrentUser, HttpCurrentUser>();
 builder.Services.AddControllers();
 builder.Services.AddHealthChecks();
 builder.Services.AddProblemDetails();

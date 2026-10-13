@@ -48,14 +48,21 @@ public static class ResultExtensions
             context.Response.Headers.WWWAuthenticate = "Bearer";
         }
 
+        var extensions = new Dictionary<string, object?>
+        {
+            ["code"] = error.Code,
+            ["traceId"] = context.TraceIdentifier
+        };
+
+        if (error.ValidationErrors is not null)
+        {
+            extensions["errors"] = error.ValidationErrors;
+        }
+
         return Results.Problem(
             statusCode: status,
             title: error.Type.ToString(),
             detail: error.Message,
-            extensions: new Dictionary<string, object?>
-            {
-                ["code"] = error.Code,
-                ["traceId"] = context.TraceIdentifier
-            });
+            extensions: extensions);
     }
 }

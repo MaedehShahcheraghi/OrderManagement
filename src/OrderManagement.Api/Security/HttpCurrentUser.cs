@@ -17,4 +17,11 @@ public sealed class HttpCurrentUser(
                 : null;
         }
     }
+
+    public long? CustomerId { get; }
+    public bool IsAuthenticated { get; }
+    public bool IsInRole(string role)
+    {
+        throw new NotImplementedException();
+    }
 }

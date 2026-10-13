@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using OrderManagement.Application.Abstractions;
+using OrderManagement.Application.Common.Behaviors;
+using OrderManagement.Application.Features.Auth.Commands.Login.Validators;
 using OrderManagement.Application.Features.Orders.Commands.ConfirmOrder;
 
 
@@ -12,9 +15,17 @@ public static class ServiceCollectionExtension
     {
         services.AddSingleton<TimeProvider>(
             TimeProvider.System);
+        services.AddValidatorsFromAssemblyContaining<
+            LoginCommandValidator>(ServiceLifetime.Scoped);
+
         services.AddMediatR(configuration =>
-            configuration.RegisterServicesFromAssemblyContaining<
-                ConfirmOrderCommand>());
+        {
+            configuration.RegisterServicesFromAssembly(
+                typeof(ServiceCollectionExtension).Assembly);
+
+            configuration.AddOpenBehavior(
+                typeof(ValidationBehavior<,>));
+        });
 
 
         return services;

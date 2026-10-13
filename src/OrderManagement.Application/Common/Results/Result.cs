@@ -1,7 +1,7 @@
 ﻿namespace OrderManagement.Application.Common.Results;
 
 
-public class Result
+public class Result : IResultFactory<Result>
 {
     protected Result(Error? error)
     {

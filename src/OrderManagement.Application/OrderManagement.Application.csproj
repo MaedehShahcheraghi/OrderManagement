@@ -3,9 +3,11 @@
     <ProjectReference Include="../OrderManagement.Domain/OrderManagement.Domain.csproj" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
       <PackageReference Include="MediatR" />
+      <PackageReference Include="FluentValidation" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Features\" />
+    <Folder Include="Features\Auth\Queries\" />
     <Folder Include="Features\Orders\Queries\" />
   </ItemGroup>
 </Project>

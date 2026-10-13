@@ -1,6 +1,7 @@
 ﻿namespace OrderManagement.Application.Common.Results;
 
-public sealed class Result<T> : Result
+public sealed class Result<T>
+    : Result, IResultFactory<Result<T>>
 {
     private Result(T? value, Error? error)
         : base(error)
