@@ -1,98 +1,66 @@
 # Order Management Service
 
-A simple Order Management API built with **.NET 10** and **Clean Architecture**.
+Order management API using .NET 10, Clean Architecture, EF Core SQL Server, JWT authorization, MediatR, and background Worker hosting.
 
-## Project Status
+## Projects
 
-### Completed
-- Created the solution with 5 projects: Domain, Application, Infrastructure, API, and Worker.
-- Implemented Order, OrderItem, Customer, Product, and Inventory models.
-- Added order status management: Pending, Confirmed, Shipped, and Delivered.
-- Added basic business rules, validation, and soft deletion.
-- Added a health check endpoint.
-- Verified that the API and Worker run successfully.
+- Domain: order aggregate, inventory model, validation and status history
+- Application: order commands, queries, pagination, authorization checks
+- Infrastructure.Persistence: EF Core, SQL Server, migrations and seed data
+- Infrastructure.Identity: ASP.NET Core Identity, JWT and permissions
+- API: HTTP endpoints, authentication, rate limiting and documentation
+- Worker: hosted process; RabbitMQ is outside this task's scope
 
-### TODO
-- SQL Server and EF Core
-- Authentication and Authorization
-- Order CRUD APIs
-- Pagination and Bulk Import
-- RabbitMQ messaging
-- Docker Compose
-- Unit and Integration Tests
+## Local setup
 
-## Getting Started
+Install .NET 10 and configure SQL Server. Development configuration is stored in User Secrets, not tracked appsettings files.
 
-**Requirements:** .NET 10 SDK
+```powershell
+dotnet user-secrets set "ConnectionStrings:SqlServer" "Server=localhost;Database=OrderManagementDB;Trusted_Connection=True;TrustServerCertificate=True" --project src/OrderManagement.Api
 
-Restore and build the solution:
+$bytes = New-Object byte[] 32
+[System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+$key = [Convert]::ToBase64String($bytes)
+dotnet user-secrets set "Jwt:SigningKey" "$key" --project src/OrderManagement.Api
 
-```bash
 dotnet restore OrderManagement.slnx
 dotnet build OrderManagement.slnx
 ```
 
-Run the API:
+Run the sales database migration with EF Core CLI, using `OrderDbContext` and the Persistence project. Apply the Identity migration separately using `IdentityDBContext` in the Identity project after creating the initial Identity migration. The Identity database should be prepared before attempting to seed login users.
 
-```bash
-dotnet run --project src/OrderManagement.Api
+```powershell
+dotnet ef database update --project src/OrderManagement.Infrastructure.Persistence --startup-project src/OrderManagement.Api --context OrderDbContext
+dotnet run --project src/OrderManagement.Api --launch-profile http
+dotnet test OrderManagement.slnx
 ```
 
-API URL: http://localhost:5080
+The API listens on `http://localhost:5080`, with `GET /health/live` for liveness. The Swagger PR enables `http://localhost:5080/swagger` in Development.
 
-Health Check: http://localhost:5080/health/live
+## Authentication
 
-Run the Worker:
+`POST /api/auth/login` accepts an email and password for an existing ASP.NET Core Identity user. The response contains an `accessToken`. Send `Authorization: Bearer <accessToken>` to the protected endpoints. `GET /api/auth/me` returns the authenticated account's roles and customer ID.
 
-```bash
-dotnet run --project src/OrderManagement.Worker
-```
+The codebase contains `IdentitySeeder`, but the bootstrap needs to be executed against a migrated Identity database to create login users. Do not commit passwords or access tokens. The previously committed SQL password must be rotated.
 
-> The Worker currently runs without RabbitMQ integration.
+## Orders
 
-## Project Structure
+- `POST /api/orders`: create an order; pricing is loaded from persisted products
+- `POST /api/orders/bulk`: create up to 500 orders per transaction
+- `GET /api/orders/{id}`: retrieve order details
+- `GET /api/orders`: filter by customer, status and created date; offset pagination
+- `GET /api/orders/after`: cursor pagination
+- `POST /api/orders/{id}/confirm`: atomically deduct inventory and confirm
+- `POST /api/orders/{id}/ship`: ship confirmed order
+- `POST /api/orders/{id}/deliver`: deliver shipped order
+- `DELETE /api/orders/{id}`: soft delete an order
 
-```text
-src/
-├── OrderManagement.Domain
-├── OrderManagement.Application
-├── OrderManagement.Infrastructure
-├── OrderManagement.Api
-└── OrderManagement.Worker
-```
+Permissions are enforced on endpoints. Admins can manage orders; normal users are scoped to their associated customer when creating or reading orders. Inventory decrements are executed conditionally in a database transaction.
 
-- **Domain:** Entities and business rules.
-- **Application:** Business operations and interfaces.
-- **Infrastructure:** Database and external services.
-- **API:** HTTP endpoints.
-- **Worker:** Background processing.
+## Validation and outstanding work
 
-## Order Rules
+Domain xUnit tests cover status ordering, price snapshots, duplicate items, soft deletion, and stock rules. Run `dotnet test OrderManagement.slnx`.
 
-- Each order must contain 1–100 unique products.
-- Product prices must be positive.
-- Order status follows: Pending → Confirmed → Shipped → Delivered.
-- Invalid status changes are rejected.
-- Deleted orders are soft-deleted.
-- Inventory cannot have negative stock.
-- Order changes are tracked with UTC timestamps and status history.
+Database-backed integration testing, EF Core migration execution for Identity and API smoke testing with live JWT credentials still require verification. The repository previously contained mismatched DTOs and missing application features, so run the full build/test suite on the integrated branches before submission. The batched EF Core bulk write is not a provider-native bulk copy and should not be described as equivalent to `SqlBulkCopy`. RabbitMQ and Docker are intentionally out of scope.
 
-## Verification
-
-Tested with **.NET SDK 10.0.401**.
-
-- All 5 projects build successfully.
-- 0 errors and 0 warnings.
-- API health check returns `200 OK`.
-- Worker starts successfully.
-- 24 domain scenarios passed using a temporary test harness.
-
-Formal automated tests will be added later.
-
-## Development Progress
-
-- Phase 1: Project Setup — Completed
-- Phase 2: Domain Models & Rules — Completed
-- Next: Database & Persistence
-
-More details: `docs/phases-01-02.fa.md`
+See `docs/development-startup.md` for details.
