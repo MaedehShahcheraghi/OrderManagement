@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <UserSecretsId>OrderManagement.Api-Development</UserSecretsId>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../OrderManagement.Application/OrderManagement.Application.csproj" />
     <ProjectReference Include="..\ OrderManagement.Infrastructure.Identity\OrderManagement.Infrastructure.Identity.csproj" />
