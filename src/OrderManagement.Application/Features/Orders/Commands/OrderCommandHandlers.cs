@@ -40,7 +40,7 @@ internal static class OrderCreation
             {
                 var itemData = request.Items
                     .GroupBy(x => x.ProductId)
-                    .Select(g => new OrderItemData(g.Key, checked(g.Sum(x => (long)x.Quantity) is long total && total <= int.MaxValue ? (int)total : throw new OverflowException()), prices[g.Key].UnitPrice))
+                    .Select(g => new OrderItemData(g.Key, checked((int)g.Sum(x => (long)x.Quantity)), prices[g.Key].UnitPrice))
                     .ToArray();
                 result.Add(Order.Create(request.CustomerId, itemData, clock.GetUtcNow(), actor));
             }
