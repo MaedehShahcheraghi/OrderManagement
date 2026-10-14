@@ -1,0 +1,22 @@
+name: .NET
+
+on:
+  pull_request:
+    branches: [develop, fix/startup-auth-configuration]
+  push:
+    branches: [develop]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore OrderManagement.slnx
+      - name: Build
+        run: dotnet build OrderManagement.slnx --no-restore --configuration Release
+      - name: Test
+        run: dotnet test OrderManagement.slnx --no-build --configuration Release
