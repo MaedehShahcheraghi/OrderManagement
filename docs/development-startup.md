@@ -34,3 +34,24 @@ The Identity project's tracked directory currently begins with a space (`src/ Or
 Security services are registered by `AddApiSecurity()`, which provides `ICurrentUser` and `IHttpContextAccessor`. `AddInfrastructure()` registers the order persistence dependencies. The API now calls `UseRateLimiter()`, `UseAuthentication()`, `UseAuthorization()` and maps `MapAuthEndpoints()` after configuring services.
 
 If a DI exception still names missing services, compare the local branch and local uncommitted files with the commit under test; also confirm the exact startup project and clean/rebuild.
+
+
+## Swagger UI and JWT testing
+
+When running with the `Development` environment, Swagger UI is available at:
+
+- `http://localhost:5080/swagger`
+- OpenAPI JSON: `http://localhost:5080/swagger/v1/swagger.json`
+
+Swagger is deliberately not enabled in Production. The API uses `Swashbuckle.AspNetCore` 10.2.3 and defines an HTTP Bearer/JWT security scheme.
+
+1. Run the API with `dotnet run --project src/OrderManagement.Api --launch-profile http`.
+2. Use `POST /api/auth/login` to obtain an access token for an existing user. The Identity users must already exist (the current snapshot registers `IdentitySeeder` but does not call it during startup).
+3. In Swagger UI, select **Authorize**, paste only the `accessToken` value (without the `Bearer ` prefix), then authorize.
+4. Call `GET /api/auth/me` to verify JWT authentication. Other endpoints appear only when they are actually mapped in the running API.
+
+The global OpenAPI security requirement only documents authentication; it does **not** bypass or implement role/permission checks. `POST /api/auth/login` remains anonymous at runtime.
+
+**Do not paste access tokens or passwords into issues or Git commits.** The current tracked repository snapshot has missing order implementation types and cannot be claimed as fully verified until the entire solution builds cleanly.
+
+To test order workflows, use the JWT authorization in Swagger and call `POST /api/orders` with an existing customer and product, then confirm, ship, deliver, and read the order. Use an Admin token for status transitions, deletion and bulk creation. `GET /api/orders` accepts offset pagination; `GET /api/orders/after` accepts cursor pagination.
