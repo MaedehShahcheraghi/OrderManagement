@@ -12,10 +12,11 @@ string connectionString =
     ?? throw new InvalidOperationException(
         "SqlServer connection string is missing.");
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddApplication().
-    AddInfrastructure(connectionString)
-    .AddIdentityInfrastructure(connectionString);
+builder.Services.AddApplication().AddInfrastructure(connectionString)
+    .AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
+builder.Services.AddApiSecurity();
+
 builder.Services.AddHealthChecks();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

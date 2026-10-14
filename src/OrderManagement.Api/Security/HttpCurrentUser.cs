@@ -1,27 +1,40 @@
-﻿using OrderManagement.Application.Abstractions;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using OrderManagement.Application.Abstractions;
+using OrderManagement.Infrastructure.Identity.Constance;
 
 namespace OrderManagement.Api.Security;
 
-public sealed class HttpCurrentUser(
-    IHttpContextAccessor httpContextAccessor)
+public sealed class HttpCurrentUser(IHttpContextAccessor accessor)
     : ICurrentUser
 {
-    public string? UserId
+    private ClaimsPrincipal? Principal =>
+        accessor.HttpContext?.User;
+
+    public string? UserId =>
+        Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+
+    public bool IsAuthenticated =>
+        Principal?.Identity?.IsAuthenticated == true;
+
+    public long? CustomerId
     {
         get
         {
-            var user = httpContextAccessor.HttpContext?.User;
+            string? value = Principal?
+                .FindFirst(JwtClaimNames.CustomerId)?.Value;
 
-            return user?.Identity?.IsAuthenticated == true
-                ? user.FindFirst("sub")?.Value
+            return long.TryParse(
+                value,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out long id)
+                ? id
                 : null;
         }
     }
 
-    public long? CustomerId { get; }
-    public bool IsAuthenticated { get; }
-    public bool IsInRole(string role)
-    {
-        throw new NotImplementedException();
-    }
+    public bool IsInRole(string role) =>
+        Principal?.IsInRole(role) == true;
 }

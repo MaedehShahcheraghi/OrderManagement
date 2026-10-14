@@ -1,7 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using OrderManagement.Application.Abstractions;
 using OrderManagement.Infrastructure.Identity.Contexts;
+using OrderManagement.Infrastructure.Identity.DataSeeders;
+using OrderManagement.Infrastructure.Identity.Options;
+using OrderManagement.Infrastructure.Identity.Services;
 using OrderManagement.Infrastructure.Identity.UserModels;
 
 namespace OrderManagement.Infrastructure.Identity.Extensions;
@@ -10,11 +17,11 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddIdentityInfrastructure(
         this IServiceCollection services,
-        string connectionString)
+        IConfiguration configuration)
     {
         services.AddDbContext<IdentityDBContext>(options =>
             options.UseSqlServer(
-                connectionString,
+                configuration.GetConnectionString("SqlServer"),
                 sql =>
                 {
                     sql.UseCompatibilityLevel(160);
@@ -38,8 +45,25 @@ public static class ServiceCollectionExtension
                 options.Lockout.DefaultLockoutTimeSpan =
                     TimeSpan.FromMinutes(5);
             })
-            .AddRoles<IdentityRole>()
+            .AddRoles<IdentityRole>().AddSignInManager()
             .AddEntityFrameworkStores<IdentityDBContext>();
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(
+                options =>
+                    !string.IsNullOrWhiteSpace(options.Issuer)
+                    && !string.IsNullOrWhiteSpace(options.Audience)
+                    && !string.IsNullOrWhiteSpace(options.SigningKey)
+                    && Encoding.UTF8.GetByteCount(options.SigningKey) >= 32
+                    && options.AccessTokenMinutes is >= 1 and <= 60,
+                "JWT configuration is invalid.")
+            .ValidateOnStart();
+
+        services.TryAddSingleton(TimeProvider.System);
+
+        services.AddScoped<JwtTokenService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IdentitySeeder>();
 
         return services;
     }

@@ -27,7 +27,6 @@ public static class ServiceCollectionExtension
                 typeof(ValidationBehavior<,>));
         });
 
-
         return services;
     }
 }

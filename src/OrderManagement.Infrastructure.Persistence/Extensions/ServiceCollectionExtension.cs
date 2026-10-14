@@ -35,6 +35,9 @@ public static class ServiceCollectionExtension
                         token)));
 
         services.AddScoped<
+            IBulkOrderWriteRepository,
+            BulkOrderWriteRepository>();
+        services.AddScoped<
             IOrderWriteRepository,
             OrderWriteRepository>();
 

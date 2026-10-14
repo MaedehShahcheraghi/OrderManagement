@@ -1,25 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OrderManagement.Domain.Entities.Products;
 using OrderManagement.Domain.Repositories;
 using OrderManagement.Infrastructure.Persistence.Contexts;
-
 namespace OrderManagement.Infrastructure.Persistence.Repositories;
-
-public sealed class ProductRepository(OrderDbContext dbContext)
-    : IProductRepository
+public sealed class ProductRepository(OrderDbContext db) : IProductRepository
 {
     public async Task<IReadOnlyList<Product>> GetByIdsAsync(
-        IReadOnlyCollection<long> ids,
-        CancellationToken cancellationToken = default)
+        IReadOnlyCollection<long> ids, CancellationToken cancellationToken = default)
     {
-        if (ids.Count == 0)
-            return [];
-
-        long[] productIds = [.. ids.Distinct()];
-
-        return await dbContext.Products
-            .AsNoTracking()
-            .Where(x => productIds.Contains(x.Id))
-            .ToListAsync(cancellationToken);
+        var result = new List<Product>();
+        foreach (var chunk in ids.Distinct().Chunk(1000))
+            result.AddRange(await db.Products.AsNoTracking().Where(x => chunk.Contains(x.Id))
+                .ToListAsync(cancellationToken));
+        return result;
     }
 }
+
