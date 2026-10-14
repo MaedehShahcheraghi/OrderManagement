@@ -32,6 +32,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
+app.MapOrderEndpoints();
 app.MapControllers();
 app.MapHealthChecks("/health/live").AllowAnonymous();
 
