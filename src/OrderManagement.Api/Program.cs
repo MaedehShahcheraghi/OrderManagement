@@ -3,6 +3,7 @@ using OrderManagement.Api.Endpoints;
 using OrderManagement.Api.Security;
 using OrderManagement.Application.Extensions;
 using OrderManagement.Infrastructure.Identity.Extensions;
+using OrderManagement.Infrastructure.Identity.DataSeeders;
 using OrderManagement.Infrastructure.Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,5 +36,22 @@ app.MapAuthEndpoints();
 app.MapOrderEndpoints();
 app.MapControllers();
 app.MapHealthChecks("/health/live").AllowAnonymous();
+
+if (app.Environment.IsDevelopment() &&
+    !string.IsNullOrWhiteSpace(app.Configuration["Bootstrap:AdminEmail"]) &&
+    !string.IsNullOrWhiteSpace(app.Configuration["Bootstrap:AdminPassword"]) &&
+    !string.IsNullOrWhiteSpace(app.Configuration["Bootstrap:UserEmail"]) &&
+    !string.IsNullOrWhiteSpace(app.Configuration["Bootstrap:UserPassword"]))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    long customerId = app.Configuration.GetValue<long>("Bootstrap:CustomerId");
+    await scope.ServiceProvider.GetRequiredService<IdentitySeeder>().SeedAsync(
+        app.Configuration["Bootstrap:AdminEmail"]!,
+        app.Configuration["Bootstrap:AdminPassword"]!,
+        app.Configuration["Bootstrap:UserEmail"]!,
+        app.Configuration["Bootstrap:UserPassword"]!,
+        customerId,
+        app.Lifetime.ApplicationStopping);
+}
 
 app.Run();
