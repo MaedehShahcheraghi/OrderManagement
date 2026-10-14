@@ -91,10 +91,12 @@ public sealed class OrderApplicationTests
         public Task<IReadOnlyList<Product>> GetByIdsAsync(
             IReadOnlyCollection<long> ids, CancellationToken token = default)
         {
-            IReadOnlyList<Product> found = ids.Contains(10)
-                ? [Product.Create("TEST-10", "Product 10", 25m)]
-                : [];
-            return Task.FromResult(found);
+            if (!ids.Contains(10))
+                return Task.FromResult<IReadOnlyList<Product>>([]);
+
+            var product = Product.Create("TEST-10", "Product 10", 25m);
+            typeof(Product).GetProperty(nameof(Product.Id))!.SetValue(product, 10L);
+            return Task.FromResult<IReadOnlyList<Product>>([product]);
         }
     }
 
