@@ -1,13 +1,13 @@
 using MediatR;
 using OrderManagement.Application.Abstractions;
 using OrderManagement.Application.Common.Errors;
+using OrderManagement.Application.Common.Pagination;
 using OrderManagement.Application.Common.Results;
 using OrderManagement.Application.Common.Security;
-using OrderManagement.Application.Features.Orders.Queries;
+using OrderManagement.Application.Features.Orders.Dtos;
 using OrderManagement.Application.Features.Orders.Models;
-using OrderManagement.Application.Common.Pagination;
 
-namespace OrderManagement.Application.Features.Orders;
+namespace OrderManagement.Application.Features.Orders.Queries;
 
 public sealed class GetOrderByIdHandler(IOrderReadRepository orders, ICurrentUser user)
     : IRequestHandler<GetOrderByIdQuery, Result<OrderDetailsDto>>

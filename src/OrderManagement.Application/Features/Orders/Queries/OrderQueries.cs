@@ -1,6 +1,7 @@
 using MediatR;
 using OrderManagement.Application.Common.Pagination;
 using OrderManagement.Application.Common.Results;
+using OrderManagement.Application.Features.Orders.Dtos;
 using OrderManagement.Application.Features.Orders.Models;
 
 namespace OrderManagement.Application.Features.Orders.Queries;

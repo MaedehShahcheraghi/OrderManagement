@@ -1,4 +1,5 @@
 using OrderManagement.Application.Common.Pagination;
+using OrderManagement.Application.Features.Orders.Dtos;
 using OrderManagement.Application.Features.Orders.Models;
 namespace OrderManagement.Application.Abstractions;
 public interface IOrderReadRepository

@@ -5,6 +5,7 @@ using OrderManagement.Api.Common;
 using OrderManagement.Application.Common.Security;
 using OrderManagement.Application.Features.Orders.Commands;
 using OrderManagement.Application.Features.Orders.Commands.ConfirmOrder;
+using OrderManagement.Application.Features.Orders.Dtos;
 using OrderManagement.Application.Features.Orders.Models;
 using OrderManagement.Application.Features.Orders.Queries;
 using OrderManagement.Domain.Enums;
