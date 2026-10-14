@@ -27,10 +27,12 @@ dotnet restore OrderManagement.slnx
 dotnet build OrderManagement.slnx
 ```
 
-Run the sales database migration with EF Core CLI, using `OrderDbContext` and the Persistence project. Apply the Identity migration separately using `IdentityDBContext` in the Identity project after creating the initial Identity migration. The Identity database should be prepared before attempting to seed login users.
+Apply the sales and Identity migrations to the configured SQL Server database before starting the API.
 
 ```powershell
+dotnet tool restore
 dotnet ef database update --project src/OrderManagement.Infrastructure.Persistence --startup-project src/OrderManagement.Api --context OrderDbContext
+dotnet ef database update --project "src/ OrderManagement.Infrastructure.Identity" --startup-project src/OrderManagement.Api --context IdentityDBContext
 dotnet run --project src/OrderManagement.Api --launch-profile http
 dotnet test OrderManagement.slnx
 ```
@@ -41,7 +43,7 @@ The API listens on `http://localhost:5080`, with `GET /health/live` for liveness
 
 `POST /api/auth/login` accepts an email and password for an existing ASP.NET Core Identity user. The response contains an `accessToken`. Send `Authorization: Bearer <accessToken>` to the protected endpoints. `GET /api/auth/me` returns the authenticated account's roles and customer ID.
 
-The codebase contains `IdentitySeeder`, but the bootstrap needs to be executed against a migrated Identity database to create login users. Do not commit passwords or access tokens. The previously committed SQL password must be rotated.
+In Development, configure `Bootstrap:AdminEmail`, `Bootstrap:AdminPassword`, `Bootstrap:UserEmail`, `Bootstrap:UserPassword` and `Bootstrap:CustomerId` in User Secrets to provision login users on startup. `CustomerId` must refer to an existing seeded customer. Bootstrap runs only when all four account settings are supplied. Do not commit passwords or access tokens. The previously committed SQL password must be rotated.
 
 ## Orders
 
@@ -61,6 +63,6 @@ Permissions are enforced on endpoints. Admins can manage orders; normal users ar
 
 Domain xUnit tests cover status ordering, price snapshots, duplicate items, soft deletion, and stock rules. Run `dotnet test OrderManagement.slnx`.
 
-Database-backed integration testing, EF Core migration execution for Identity and API smoke testing with live JWT credentials still require verification. The repository previously contained mismatched DTOs and missing application features, so run the full build/test suite on the integrated branches before submission. The batched EF Core bulk write is not a provider-native bulk copy and should not be described as equivalent to `SqlBulkCopy`. RabbitMQ and Docker are intentionally out of scope.
+Database-backed integration testing, migration execution against a real SQL Server instance, and API smoke testing with live JWT credentials still require verification. The repository previously contained mismatched DTOs and missing application features, so run the full build/test suite on the integrated branches before submission. The batched EF Core bulk write is not a provider-native bulk copy and should not be described as equivalent to `SqlBulkCopy`. RabbitMQ and Docker are intentionally out of scope.
 
 See `docs/development-startup.md` for details.
