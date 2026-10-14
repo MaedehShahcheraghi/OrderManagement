@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/src/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/OrderManagement.Domain.Tests/OrderManagement.Domain.Tests.csproj" />
+  </Folder>
   <Folder Name="/src/Api/">
     <Project Path="src/OrderManagement.Api/OrderManagement.Api.csproj" />
   </Folder>
