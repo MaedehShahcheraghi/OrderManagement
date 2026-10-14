@@ -1,14 +1,10 @@
-﻿using OrderManagement.Application.Orders.Queries;
 using OrderManagement.Domain.Enums;
 
-namespace OrderManagement.Application.Features.Orders.Dtos;
+namespace OrderManagement.Application.Features.Orders.Models;
 
 public sealed record OrderDetailsDto(
-    long Id,
-    long CustomerId,
-    OrderStatus Status,
-    decimal TotalAmount,
-    DateTimeOffset CreatedAt,
-    int Revision,
-    byte[] RowVersion,
-    IReadOnlyList<OrderItemDto> Items);
+    long Id, long CustomerId, OrderStatus Status, decimal TotalAmount,
+    DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt,
+    int Revision, byte[] RowVersion,
+    IReadOnlyList<OrderItemDto> Items,
+    IReadOnlyList<OrderStatusHistoryDto> StatusHistory);
