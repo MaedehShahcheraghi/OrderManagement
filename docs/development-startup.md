@@ -53,3 +53,5 @@ Swagger is deliberately not enabled in Production. The API uses `Swashbuckle.Asp
 The global OpenAPI security requirement only documents authentication; it does **not** bypass or implement role/permission checks. `POST /api/auth/login` remains anonymous at runtime.
 
 **Do not paste access tokens or passwords into issues or Git commits.** The current tracked repository snapshot has missing order implementation types and cannot be claimed as fully verified until the entire solution builds cleanly.
+
+To test order workflows, use the JWT authorization in Swagger and call `POST /api/orders` with an existing customer and product, then confirm, ship, deliver, and read the order. Use an Admin token for status transitions, deletion and bulk creation. `GET /api/orders` accepts offset pagination; `GET /api/orders/after` accepts cursor pagination.
